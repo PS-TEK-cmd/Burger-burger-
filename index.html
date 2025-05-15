@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Collection + Console Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: black;
+            color: white;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        input, select, button {
+            padding: 10px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #444;
+            color: white;
+            cursor: pointer;
+        }
+        .status {
+            margin-top: 10px;
+        }
+        .green { color: green; }
+        .orange { color: orange; }
+        .red { color: red; }
+        .dark-mode {
+            background-color: black;
+            color: white;
+        }
+        .light-mode {
+            background-color: white;
+            color: black;
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <h1>Game Collection + Console Calculator</h1>
+    <p class="status">Calculator Status: <span id="status" class="green">Green: Perfect</span></p>
+    <h2>Collection value so far: £<span id="collectionValue">0</span></h2>
+    
+    <input type="text" id="gameName" placeholder="Game Name (optional)">
+    <select id="console">
+        <option value="">Select Console</option>
+        <option>PS1</option><option>PS2</option><option>PS3</option><option>PS4</option><option>PS5</option>
+        <option>Xbox</option><option>Xbox 360</option><option>Xbox One</option><option>Xbox Series X</option>
+        <option>Nintendo 64</option><option>GameCube</option><option>Wii</option><option>Wii U</option><option>Switch</option>
+        <option>3DS</option><option>DS</option><option>PSP</option><option>PS Vita</option><option>Dreamcast</option>
+    </select>
+    <br>
+    <button onclick="addGame()">Add Game</button>
+    <button onclick="toggleMode()">Toggle Light/Dark Mode</button>
+
+    <h3>Settings</h3>
+    <p>Change Currency (coming soon)</p>
+    <p>Clear Collection (coming soon)</p>
+    <p>View Added Games (coming soon)</p>
+
+    <p>Made & Developed by PS-TEK on TikTok!</p>
+
+    <script>
+        let totalValue = 0;
+
+        function addGame() {
+            const game = document.getElementById('gameName').value.trim();
+            const console = document.getElementById('console').value;
+            if (!console) {
+                alert("Please select a console.");
+                return;
+            }
+            const price = 20; // Dummy value for now
+            totalValue += price;
+            document.getElementById('collectionValue').innerText = totalValue;
+        }
+
+        function toggleMode() {
+            const body = document.body;
+            body.classList.toggle('light-mode');
+            body.classList.toggle('dark-mode');
+        }
+    </script>
+</body>
+</html>
