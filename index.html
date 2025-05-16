@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,11 +11,15 @@
       color: #fff;
       text-align: center;
       padding: 20px;
+      transition: all 0.3s ease;
     }
     input, select, button {
       padding: 10px;
       margin: 10px;
       font-size: 16px;
+    }
+    button {
+      cursor: pointer;
     }
     #credit {
       margin-top: 50px;
@@ -31,12 +34,29 @@
       background-color: #fff;
       color: #000;
     }
+    #gameList {
+      margin-top: 20px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
+    }
+    .game-item {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+    .light-mode .game-item {
+      background: #ddd;
+    }
   </style>
 </head>
 <body class="dark-mode">
   <h1>Game Collection + Console Calculator</h1>
-  <p id="status">Status: <span style="color: green;">Green: Perfect</span></p>
+  <p id="status">Status: <span style="color: lime;">Green: Perfect</span></p>
   <h2>Collection value so far: £<span id="collectionValue">0</span></h2>
+  
   <input type="text" id="gameName" placeholder="Enter Game Name" />
   <select id="console">
     <option value="">-- Select Console --</option>
@@ -63,29 +83,39 @@
   <button onclick="toggleMode()">Toggle Light/Dark Mode</button>
 
   <h3>Settings</h3>
-  <p>Change Currency (coming soon)</p>
-  <p>Clear Collection (coming soon)</p>
-  <p>View Added Games (coming soon)</p>
+  <button onclick="clearCollection()">Clear Collection</button>
+  <button onclick="toggleGameList()">View Added Games</button>
+
+  <div id="gameList" style="display: none;"></div>
 
   <p id="credit">Built by PS-TEK</p>
 
   <script>
     let totalValue = 0;
+    let games = [];
 
     function addGame() {
       if (!document.getElementById('credit')) {
         alert("Unauthorized copy. Credit missing.");
         return;
       }
-      const game = document.getElementById('gameName').value.trim();
+
+      const gameName = document.getElementById('gameName').value.trim();
       const console = document.getElementById('console').value;
-      if (!console) {
-        alert("Please select a console.");
+
+      if (!gameName || !console) {
+        alert("Please enter a game name and select a console.");
         return;
       }
-      const price = 20; // Dummy price; real API integration below
-      totalValue += price;
-      document.getElementById('collectionValue').innerText = totalValue;
+
+      getPriceFromCeX(gameName, console).then(price => {
+        games.push({ name: gameName, console: console, price });
+        totalValue += price;
+        document.getElementById('collectionValue').innerText = totalValue.toFixed(2);
+        updateGameList();
+        document.getElementById('gameName').value = '';
+        document.getElementById('console').value = '';
+      });
     }
 
     function toggleMode() {
@@ -93,18 +123,53 @@
       document.body.classList.toggle('dark-mode');
     }
 
-    // Credit check on load
+    function updateGameList() {
+      const gameList = document.getElementById('gameList');
+      gameList.innerHTML = '';
+      games.forEach((game, index) => {
+        const item = document.createElement('div');
+        item.className = 'game-item';
+        item.innerText = `${index + 1}. ${game.name} (${game.console}) - £${game.price.toFixed(2)}`;
+        gameList.appendChild(item);
+      });
+    }
+
+    function toggleGameList() {
+      const list = document.getElementById('gameList');
+      list.style.display = list.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function clearCollection() {
+      if (confirm("Are you sure you want to clear your collection?")) {
+        totalValue = 0;
+        games = [];
+        document.getElementById('collectionValue').innerText = '0';
+        document.getElementById('gameList').innerHTML = '';
+        document.getElementById('gameList').style.display = 'none';
+      }
+    }
+
+    async function getPriceFromCeX(gameName, console) {
+      // Placeholder for actual CeX API/scraper
+      // You'd replace this with real API integration
+      console.log(`Fetching price for ${gameName} on ${console}`);
+      return new Promise(resolve => {
+        setTimeout(() => {
+          const dummyPrice = Math.floor(Math.random() * 31) + 5; // £5–£35
+          resolve(dummyPrice);
+        }, 300);
+      });
+    }
+
     window.onload = function () {
       if (!document.getElementById('credit')) {
         document.body.innerHTML = "<h1>Unauthorized Copy</h1><p>This version has been disabled due to missing credit.</p>";
       }
 
-      // Example: Fetching free games
+      // Sample: Fetching free games (as before)
       fetch('https://www.freetogame.com/api/games')
-        .then(response => response.json())
-        .then(data => {
-          console.log("Fetched Games:", data.slice(0, 5)); // Display top 5 in console
-        })
+        .then(res => res.json())
+        .then(data => console.log("Free games sample:", data.slice(0, 5)))
         .catch(err => console.error("API Error:", err));
     };
   </script>
